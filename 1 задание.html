@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+
+</head>
+<body>
+    <div class="container" style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+        <h1>Калькулятор</h1>
+        <div class="calculator">
+            <input type="text" id="display" readonly><br>
+            <div class="row">
+                <input type="button" value="1" onclick="calculator.addToDisplay('1')">
+                <input type="button" value="2" onclick="calculator.addToDisplay('2')">
+                <input type="button" value="3" onclick="calculator.addToDisplay('3')">
+                <input type="button" value="+" onclick="calculator.setOperation('+')">
+            </div>
+            <div class="row">
+                <input type="button" value="4" onclick="calculator.addToDisplay('4')">
+                <input type="button" value="5" onclick="calculator.addToDisplay('5')">
+                <input type="button" value="6" onclick="calculator.addToDisplay('6')">
+                <input type="button" value="-" onclick="calculator.setOperation('-')">
+            </div>
+            <div class="row">
+                <input type="button" value="7" onclick="calculator.addToDisplay('7')">
+                <input type="button" value="8" onclick="calculator.addToDisplay('8')">
+                <input type="button" value="9" onclick="calculator.addToDisplay('9')">
+                <input type="button" value="*" onclick="calculator.setOperation('*')">
+            </div>
+            <div class="row">
+                <input type="button" value="C" onclick="calculator.clearDisplay()">
+                <input type="button" value="0" onclick="calculator.addToDisplay('0')">
+                <input type="button" value="=" onclick="calculator.calculate()">
+                <input type="button" value="/" onclick="calculator.setOperation('/')">
+            </div>
+        </div>
+    </div>
+    
+
+    <style>
+        .calculator {
+            width: 220px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="button"] {
+            width: 40px;
+            height: 40px;
+            margin: 5px;
+        }
+    </style>
+
+    <script>
+        class Calculator {
+            constructor() {
+                this.display = document.getElementById('display');
+                this.currentNumber = '';
+                this.operation = '';
+                this.result = '';
+            }
+
+            addToDisplay(value) {
+                this.currentNumber += value;
+                this.display.value = this.currentNumber;
+            }
+
+            clearDisplay() {
+                this.currentNumber = '';
+                this.operation = '';
+                this.result = '';
+                this.display.value = '';
+            }
+
+            setOperation(operator) {
+                this.operation = operator;
+                this.result = this.currentNumber;
+                this.currentNumber = '';
+            }
+
+            calculate() {
+                const num1 = parseFloat(this.result);
+                const num2 = parseFloat(this.currentNumber);
+                let result;
+                switch (this.operation) {
+                    case '+':
+                        result = num1 + num2;
+                        break;
+                    case '-':
+                        result = num1 - num2;
+                        break;
+                    case '*':
+                        result = num1 * num2;
+                        break;
+                    case '/':
+                        result = num1 / num2;
+                        break;
+                    default:
+                        result = num2;
+                }
+                this.display.value = result;
+                this.currentNumber = result.toString();
+            }
+        }
+
+        const calculator = new Calculator();
+    </script>
+</body>
+</html>

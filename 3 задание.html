@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="text"] {
+            width: 70%;
+            padding: 8px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .delete {
+            color: red;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Task Manager</h1>
+        <input type="text" id="taskInput" placeholder="Enter task">
+        <button id="addTaskBtn">Add Task</button>
+        <ul id="taskList"></ul>
+    </div>
+    <script>
+        class Task {
+            constructor(id, name) {
+                this.id = id;
+                this.name = name;
+            }
+        }
+
+        class TaskList {
+            constructor() {
+                this.tasks = [];
+            }
+
+            addTask(task) {
+                this.tasks.push(task);
+            }
+
+            removeTask(id) {
+                this.tasks = this.tasks.filter(task => task.id !== id);
+            }
+        }
+
+        class TaskManager {
+            constructor() {
+                this.taskList = new TaskList();
+                this.taskInput = document.getElementById('taskInput');
+                this.addTaskBtn = document.getElementById('addTaskBtn');
+                this.taskListElement = document.getElementById('taskList');
+
+                this.addTaskBtn.addEventListener('click', this.addTask.bind(this));
+                this.taskListElement.addEventListener('click', this.removeTask.bind(this));
+
+                this.renderTasks();
+            }
+
+            addTask() {
+                const taskName = this.taskInput.value.trim();
+                if (taskName !== '') {
+                    const task = new Task(Date.now(), taskName);
+                    this.taskList.addTask(task);
+                    this.renderTasks();
+                    this.taskInput.value = '';
+                }
+            }
+
+            removeTask(event) {
+                if (event.target.classList.contains('delete')) {
+                    const taskId = parseInt(event.target.parentElement.getAttribute('data-id'));
+                    this.taskList.removeTask(taskId);
+                    this.renderTasks();
+                }
+            }
+
+            renderTasks() {
+                this.taskListElement.innerHTML = '';
+                this.taskList.tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.textContent = task.name;
+                    li.setAttribute('data-id', task.id);
+                    const deleteButton = document.createElement('span');
+                    deleteButton.textContent = '❌';
+                    deleteButton.classList.add('delete');
+                    li.appendChild(deleteButton);
+                    this.taskListElement.appendChild(li);
+                });
+            }
+        }
+
+        const taskManager = new TaskManager();
+    </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <style>
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registration Form</h1>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <span class="error" id="usernameError"></span>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <span class="error" id="emailError"></span>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <span class="error" id="passwordError"></span>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <span class="error" id="confirmPasswordError"></span>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <div id="message"></div>
+    </div>
+    <script>
+        class Field {
+            constructor(inputId, errorId, validatorFn) {
+                this.input = document.getElementById(inputId);
+                this.error = document.getElementById(errorId);
+                this.validatorFn = validatorFn;
+                this.input.addEventListener('input', this.handleInput.bind(this));
+            }
+
+            handleInput() {
+                const value = this.input.value.trim();
+                const errorMessage = this.validatorFn(value);
+                this.error.textContent = errorMessage;
+            }
+
+            getValue() {
+                return this.input.value.trim();
+            }
+
+            setError(message) {
+                this.error.textContent = message;
+            }
+        }
+
+        class Validator {
+            static validateUsername(username) {
+                if (!username) {
+                    return 'Username is required';
+                } else if (username.length < 3) {
+                    return 'Username must be at least 3 characters long';
+                }
+                return '';
+            }
+
+            static validateEmail(email) {
+                if (!email) {
+                    return 'Email is required';
+                } else if (!/\S+@\S+\.\S+/.test(email)) {
+                    return 'Invalid email format';
+                }
+                return '';
+            }
+
+            static validatePassword(password) {
+                if (!password) {
+                    return 'Password is required';
+                } else if (password.length < 6) {
+                    return 'Password must be at least 6 characters long';
+                }
+                return '';
+            }
+
+            static validateConfirmPassword(password, confirmPassword) {
+                if (!confirmPassword) {
+                    return 'Please confirm your password';
+                } else if (password !== confirmPassword) {
+                    return 'Passwords do not match';
+                }
+                return '';
+            }
+        }
+
+        class Form {
+            constructor() {
+                this.fields = [];
+                this.form = document.getElementById('registrationForm');
+                this.message = document.getElementById('message');
+                this.form.addEventListener('submit', this.handleSubmit.bind(this));
+            }
+
+            addField(field) {
+                this.fields.push(field);
+            }
+
+            handleSubmit(event) {
+                event.preventDefault();
+                let isValid = true;
+                this.fields.forEach(field => {
+                    const errorMessage = field.validatorFn(field.getValue());
+                    if (errorMessage) {
+                        field.setError(errorMessage);
+                        isValid = false;
+                    }
+                });
+
+                if (isValid) {
+                    this.message.textContent = 'Form submitted successfully!';
+                    this.message.style.color = 'green';
+                    // Here you can submit the form data to server
+                } else {
+                    this.message.textContent = 'Please fix the errors above';
+                    this.message.style.color = 'red';
+                }
+            }
+        }
+
+        const form = new Form();
+        form.addField(new Field('username', 'usernameError', Validator.validateUsername));
+        form.addField(new Field('email', 'emailError', Validator.validateEmail));
+        form.addField(new Field('password', 'passwordError', Validator.validatePassword));
+        form.addField(new Field('confirmPassword', 'confirmPasswordError', 
+                                (confirmPassword) => Validator.validateConfirmPassword(
+                                    document.getElementById('password').value, confirmPassword
+                                )));
+    </script>
+</body>
+</html>
